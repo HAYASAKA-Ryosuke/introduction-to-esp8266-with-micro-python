@@ -1,0 +1,115 @@
+@charset "UTF-8";
+
+.title{
+    position:relative;
+    padding-left:25px;
+    padding-top:5px;
+    padding-bottom:5px;
+    font:bold 28px/1.6 Arial, Helvetica, sans-serif;
+    color:#555555;
+}
+
+li {
+    list-style: inline
+}
+
+.body-common{
+    margin-top: 20px;
+    margin-right: 50px;
+    margin-left: 50px;
+    border-radius: 10px;
+    padding:15px;
+    color:#FFF0A5;
+    border: 20px solid #fff;
+    border-top:1px #aaa;
+    border-right:1px #aaa;
+    border-left:1px #aaa;
+    border-bottom:1px #aaa;
+    box-shadow: 0 0 0 2px #000;
+    background:#FFF0A5;
+}
+
+.section-common{
+    margin-top: 50px;
+    margin-right: 50%;
+    margin-left: 50px;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    position:relative;
+    padding:10px;
+    font:bold 22px/1.6 Arial, Helvetica, sans-serif;
+    color:#FFF0A5;
+    background:#468966;
+}
+
+.p-common{
+    position:relative;
+    padding-left:25px;
+    padding-top:5px;
+    padding-bottom:5px;
+    font:bold 18px/1.6 Arial, Helvetica, sans-serif;
+    color:#555555;
+}
+
+.heading-common{
+    margin-top: 50px;
+    margin-right: 20px;
+    margin-left: 20px;
+    border-radius: 10px;
+    position:relative;
+    padding:25px;
+    font:bold 22px/1.6 Arial, Helvetica, sans-serif;
+    color:#BE2800;
+    border: 2px solid #fff;
+    border-top:1px #aaa;
+    border-right:1px #aaa;
+    border-left:1px #aaa;
+    border-bottom:1px #aaa;
+    box-shadow: 0 0 0 2px #000;
+    background:#FFB03B;
+}
+
+.heading-common:before {
+    color: #ff4f02;
+    background-color: #fff;
+    font-size: 1.2em;
+    position: absolute;
+    top: -1.8em;
+    left: 1em;
+    margin: 20px;
+    padding: 0 .5em;
+    border: 2px solid #fff;
+    border-top:1px #aaa;
+    border-right:1px #aaa;
+    border-left:1px #aaa;
+    border-bottom:1px #aaa;
+    box-shadow: 0 0 0 2px #000;
+}
+.heading-01:before {
+    content: "第1章";
+}
+.heading-02:before {
+    content: "第2章";
+}
+.heading-03:before {
+    content: "第3章";
+}
+.heading-04:before {
+    content: "第4章";
+}
+.heading-05:before {
+    content: "第5章";
+}
+.heading-06:before {
+    content: "第6章";
+}
+.heading-07:before {
+    content: "第7章";
+}
+.heading-08:before {
+    content: "第8章";
+}
+.heading-09:before {
+    content: "第9章";
+}
+

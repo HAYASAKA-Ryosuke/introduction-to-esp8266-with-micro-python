@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link type="text/css" href="micropython_and_esp8266_style.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<title>MicroPythonによるESP8266入門のサポートページ</title>
+</head>
+
+<body>
+<h1 class="title">MicroPythonによるESP8266入門のサポートページ</h1>
+
+<h2 class="section-common">各章のコード</h2>
+<div class="body-common">
+
+
+<p class="p-common">コードタイトルクリックすると表示非表示されます</p>
+
+<ul class="heading-common heading-04">
+<li><a href="#" onclick="show('sourcecode4-1');return false;">Lチカのソースコード</a></li>
+<pre id="sourcecode4-1" style="display: none;"><code class="python">
+from machine import Pin import time
+p14 = Pin(14, Pin.OUT)
+while True:
+    p14.high()
+    time.sleep(1)
+    p14.low()
+    time.sleep(1)
+</code></pre>
+</ul>
+
+<ul class="heading-common heading-05">
+<li><a href="#" onclick="show('sourcecode5-1');return false;">CdSで明るさを表示するソースコード</a></li>
+<pre id="sourcecode5-1" style="display: none;"><code class="python">
+from machine import Pin, ADC
+import time
+
+p4 = Pin(4, Pin.OUT)
+p4.high()
+adc = ADC(0)
+while True:
+    print(adc.read())
+    time.sleep ms(100)
+</code></pre>
+</ul>
+
+<ul class="heading-common heading-06">
+<li><a href="#" onclick="show('sourcecode6-1');return false;">サーボモータを制御するソースコード</a></li>
+<pre id="sourcecode6-1" style="display: none;"><code class="python">
+from machine import Pin, PWM
+import time
+servo = PWM(Pin(12), freq=50)
+
+while True:
+    servo.duty(51)
+    time.sleep(1)
+    servo.duty(102)
+    time.sleep(1)
+</code></pre>
+</ul>
+
+<ul class="heading-common heading-07">
+<li><a href="#" onclick="show('sourcecode7-1');return false;">Cygrにログインしてコンテナメッセージを書き換えるソースコード</a></li>
+<pre id="sourcecode7-1" style="display: none;"><code class="python">
+import requests
+from time import sleep
+
+headers = {'contant-type': 'application/json'}
+
+def login(mail, password):
+    login = {"user": {"mail": mail, "raw_password": password}}
+    url = "http://157.7.153.173/users/sessions/new"
+    response = requests.post(url, json=login, headers=headers)
+    cookie = response.headers['set-cookie']
+    return {'Cookie': cookie})
+
+def on(container_id):
+    on = {"container": {"message": "on"}}
+    url = "http://157.7.153.173/containers/"
+    requests.put(url + str(container_id), json=on, headers=headers)
+
+def off(container_id):
+    off = {"container": {"message": "off"}}
+    url = "http://157.7.153.173/containers/"
+    requests.put(url + str(container_id), json=off, headers=headers)
+
+headers.update(login(<mail>, <password>))
+for i in range(10):
+    on(<container_id>)
+    sleep(1)
+    off(<container_id>)
+    sleep(1)
+</code></pre>
+</ul>
+
+
+<ul class="heading-common heading-08">
+<li><a href="#" onclick="show('sourcecode8-1');return false;">Cygr経由でLチカを行なうソースコード</a></li>
+<pre id="sourcecode8-1" style="display: none;"><code class="python">
+from machine import Pin
+from time import sleep_ms
+import urequests
+import network
+
+
+def do_connect():
+    sta_if = network.WLAN(network.STA_IF)
+    if not sta_if.isconnected():
+        sta_if.active(True)
+        sta_if.connect(<ESSID>, <PASSWORD>)
+        while not sta_if.isconnected():
+            pass
+
+
+def get_data(url):
+    resp = urequests.get(url)
+    return resp.text
+
+
+do_connect()
+p14 = Pin(14, Pin.OUT)
+while True:
+    message_param = get_data('http://157.7.153.173/containers/messages/?key=<key>')
+    if message_param == 'ON':
+        p14.high()
+    else:
+        p14.low()
+    sleep_ms(1000)
+</code></pre>
+</ul>
+
+<ul class="heading-common heading-09">
+<li><a href="#" onclick="show('sourcecode9-1');return false;">有機ELキャラクタディスプレイに文字列を表示するソースコード</a></li>
+<pre id="sourcecode9-1" style="display: none;"><code class="python">
+from machine import Pin, I2C
+from micropython import const
+from time import sleep_ms
+
+OLED_ADRS = const(0x3C)
+DISPLAY_ON = const(0x0F)
+CLEAR_DISPLAY = const(0x01)
+RETURN_HOME = const(0x02)
+
+
+class LCD:
+    def __init__(self):
+        self.temp = bytearray(2)
+        self.i2c = I2C(Pin(5), Pin(4))
+
+    def write_data(self, param):
+        self.temp[0] = 0x40
+        self.temp[1] = param
+        self.i2c.start()
+        self.i2c.writeto(0x3C, self.temp)
+        self.i2c.stop()
+
+    def write_command(self, param):
+        self.temp[0] = 0x00
+        self.temp[1] = param
+        self.i2c.start()
+        self.i2c.writeto(0x3C, self.temp)
+        self.i2c.stop()
+
+    def init_lcd(self):
+        sleep_ms(100)
+        self.write_command(1)
+        sleep_ms(20)
+        self.write_command(0x02)
+        sleep_ms(2)
+        self.write_command(0x0F)
+        sleep_ms(2)
+        self.write_command(0x01)
+        sleep_ms(20)
+
+lcd = LCD()
+lcd.init_lcd()
+for i in 'Hello World!!':
+    lcd.write_data(ord(i))
+</code></pre>
+
+<li><a href="#" onclick="show('sourcecode9-2');return false;">Cygr経由で有機ELキャラクタディスプレイに文字列を表示するソースコード</a></li>
+<pre id="sourcecode9-2" style="display: none;"><code class="python">
+from machine import Pin, I2C
+from micropython import const
+from time import sleep_ms
+import urequests
+import network
+
+
+OLED_ADRS = const(0x3C)
+DISPLAY_ON = const(0x0F)
+CLEAR_DISPLAY = const(0x01)
+RETURN_HOME = const(0x02)
+
+
+def do_connect():
+    sta_if = network.WLAN(network.STA_IF)
+    if not sta_if.isconnected():
+        sta_if.active(True)
+        sta_if.connect(<SSID>, <PASSWORD>)
+        while not sta_if.isconnected():
+            pass
+
+
+def get_data(url):
+    resp = urequests.get(url)
+    return resp.text
+
+
+class OLED:
+    def __init__(self):
+        self.temp = bytearray(2)
+        self.i2c = I2C(Pin(4), Pin(5))
+
+    def write_data(self, param):
+        self.temp[0] = 0x40
+        self.temp[1] = param
+        self.i2c.start()
+        self.i2c.writeto(0x3C, self.temp)
+        self.i2c.stop()
+
+    def write_command(self, param):
+        self.temp[0] = 0x00
+        self.temp[1] = param
+        self.i2c.start()
+        self.i2c.writeto(0x3C, self.temp)
+        self.i2c.stop()
+
+    def init_oled(self):
+        sleep_ms(100)
+        self.write_command(1)
+        sleep_ms(20)
+        self.write_command(0x02)
+        sleep_ms(2)
+        self.write_command(0x0F)
+        sleep_ms(2)
+        self.write_command(0x01)
+        sleep_ms(20)
+
+do_connect()
+oled = OLED()
+while True:
+    message_param = get_data('http://157.7.153.173/containers/messages/?key=<key>')
+    oled.init_oled()
+    for i in message_param:
+        oled.write_data(ord(i))
+    sleep_ms(1000)
+</code></pre>
+</ul>
+</div>
+<h2 class="section-common">各章のリンク</h2>
+
+<div class="body-common">
+
+<ul class="heading-common heading-01">
+  <li><a href="http://espressif.com/en/support/download/documents" target="_blank">ESP8266の公式ドキュメント</a></li>
+  <li><a href="https://www.switch-science.com/catalog/2500/" target="_blank">ESPr Developerの購入ページ</a></li>
+  <li><a href="https://docs.micropython.org/en/latest/esp8266/" target="_blank">MicroPythonの公式ドキュメント</a></li>
+  <li><a href="https://www.python.org/downloads/" target="_blank">プログラミング言語Pythonの公式ページ</a></li>
+  <li><a href="http://micropython.org/download" target="_blank">MicroPythonのファームウェア</a></li>
+</ul>
+<ul class="heading-common heading-03">
+  <li><a href="http://fritzing.org/download/" target="_blank">Fritzingの公式ページ</a></li>
+  <li><a href="http://akizukidenshi.com/catalog/g/gP-00318/" target="_blank">ブレッドボードの購入ページ</a></li>
+  <li><a href="http://akizukidenshi.com/catalog/g/gC-05371/" target="_blank">ブレッドボード・ジャンパーコード(オス-オス)(10cm)20本セットの購入ページ</a></li>
+</ul>
+
+<ul class="heading-common heading-04">
+  <li><a href="http://akizukidenshi.com/catalog/g/gI-00624/" target="_blank">5mm 赤色 LED(発光ダイオード)の購入ページ</a></li>
+  <li><a href="http://akizukidenshi.com/catalog/g/gR-25201/" target="_blank">1/4W 炭素皮膜抵抗 (200 Ω)の購入ページ</a></li>
+</ul>
+
+<ul class="heading-common heading-05">
+  <li><a href="http://akizukidenshi.com/catalog/g/gI-00110/" target="_blank">CdS セル 5mm タイプの購入ページ</a></li>
+  <li><a href="http://akizukidenshi.com/catalog/g/gR-25201/" target="_blank">1/4W 炭素皮膜抵抗 (200 Ω)の購入ページ</a></li>
+</ul>
+
+<ul class="heading-common heading-06">
+  <li><a href="http://akizukidenshi.com/catalog/g/gM-01968/" target="_blank">GWS サーボ S03Tの購入ページ</a></li>
+  <li><a href="http://akizukidenshi.com/catalog/g/gP-00311/" target="_blank">電池ボックス 単3×4本 リード線・フタ・スイッチ付の購入ページ</a></li>
+  <li><a href="http://akizukidenshi.com/catalog/g/gB-03256/" target="_blank">単3形アルカリ乾電池 ゴールデンパワー製 LR6 (4本入)</a></li>
+</ul>
+
+<ul class="heading-common heading-07">
+  <li><a href="http://157.7.153.173/#/UsersNew" target="_blank">Cygrユーザ登録</a></li>
+</ul>
+
+<ul class="heading-common heading-08">
+  <li><a href="https://docs.micropython.org/en/latest/esp8266/esp8266/tutorial/network_basics.html" target="_blank">ESP8266でネットワーク通信をする記事</a></li>
+</ul>
+
+<ul class="heading-common heading-09">
+  <li><a href="http://akizukidenshi.com/catalog/g/gP-08279/" target="_blank">有機ELキャラクタディスプレイモジュール 16x2行 黄色</a></li>
+  <li><a href="http://akizukidenshi.com/catalog/g/gR-03399/" target="_blank">金属皮膜抵抗 1/4W10kΩ (100本入)の購入ページ</a></li>
+</ul>
+</div>
+
+<script>
+
+function show(param)
+{
+  $('#'+param).toggle('fast');
+}
+</script>
+</body>
+
+</html> 
+
+
