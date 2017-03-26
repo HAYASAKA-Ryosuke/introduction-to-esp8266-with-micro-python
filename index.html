@@ -124,7 +124,7 @@ def get_data(url):
 do_connect()
 p14 = Pin(14, Pin.OUT)
 while True:
-    message_param = get_data('http://157.7.153.173/containers/messages/?key=<key>')
+    message_param = get_data('http://157.7.153.173/containers/messages/?key=&lt;key&gt;')
     if message_param == 'ON':
         p14.high()
     else:
@@ -244,7 +244,7 @@ class OLED:
 do_connect()
 oled = OLED()
 while True:
-    message_param = get_data('http://157.7.153.173/containers/messages/?key=<key>')
+    message_param = get_data('http://157.7.153.173/containers/messages/?key=&lt;key&gt;')
     oled.init_oled()
     for i in message_param:
         oled.write_data(ord(i))
